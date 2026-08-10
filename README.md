@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Node.js-18.x-green?style=for-the-badge&logo=node.js">
   <img src="https://img.shields.io/badge/Telegram-Bot-26A5E4?style=for-the-badge&logo=telegram">
   <img src="https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase">
-  <img src="https://img.shields.io/badge/License-ISC-orange?style=for-the-badge">
+  <img src="https://img.shields.io/badge/License-MIT-orange?style=for-the-badge">
 </p>
 
 <p align="center">
