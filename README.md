@@ -100,7 +100,7 @@ Spammer-BotV1/
 2. Clone Repository
 
 ```bash
-git clone https://github.com/USERNAME/REPOSITORY.git
+https://github.com/Sketchware-TM/Spammer-BotV1.git
 cd Spammer-BotV1
 ```
 
