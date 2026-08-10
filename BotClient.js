@@ -1,10 +1,10 @@
 const { Telegraf } = require('telegraf');
 const { createClient } = require('@supabase/supabase-js');
 
-const BOT_TOKEN = '8877634770:AAGZthQFrpSEljQ68luTUHDuAgfZPK6muuE'; 
-const OWNER_ID = '8253766491'; 
-const SUPABASE_URL = 'https://wcacddtnoijkgwfsusiy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjYWNkZHRub2lqa2d3ZnN1c2l5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyODM2NDYsImV4cCI6MjEwMTg1OTY0Nn0.1PEZscFwYGeeZ8--eJKPyk9OMaUEY1N5QLZOAJ8CBCQ';
+const BOT_TOKEN = '8877634770:your_bot_token'; 
+const OWNER_ID = 'yout_chat_id'; 
+const SUPABASE_URL = 'https://blablabla.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
 
 const bot = new Telegraf(BOT_TOKEN);
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
