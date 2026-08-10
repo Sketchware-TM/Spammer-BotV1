@@ -93,9 +93,9 @@ Spammer-BotV1/
 
 1. Prasyarat
 
-· Node.js versi 18 atau lebih baru.
-· npm (Node Package Manager).
-· Python 3.x (jika ingin menggunakan obfuscator).
+* Node.js versi 18 atau lebih baru.
+* npm (Node Package Manager).
+* Python 3.x (jika ingin menggunakan obfuscator).
 
 2. Clone Repository
 
@@ -112,8 +112,8 @@ npm install
 
 Dependency utama:
 
-· telegraf — Framework bot Telegram.
-· @supabase/supabase-js — Client Supabase untuk Node.js.
+* telegraf — Framework bot Telegram.
+* @supabase/supabase-js — Client Supabase untuk Node.js.
 
 ---
 
