@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=github">
-  <img src="https://img.shields.io/badge/Node.js-18.x-green?style=for-the-badge&logo=node.js">
+  <img src="https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js">
   <img src="https://img.shields.io/badge/Telegram-Bot-26A5E4?style=for-the-badge&logo=telegram">
   <img src="https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase">
   <img src="https://img.shields.io/badge/License-MIT-orange?style=for-the-badge">
@@ -137,10 +137,10 @@ Developer tidak bertanggung jawab atas penyalahgunaan proyek ini. Gunakan hanya 
 
 JANGAN PERNAH mengunggah file konfigurasi yang berisi:
 
-· BOT_TOKEN
-· OWNER_ID
-· Kredensial Supabase (URL & ANON_KEY)
-· Password atau API key lainnya
+* BOT_TOKEN
+* OWNER_ID
+* Kredensial Supabase (URL & ANON_KEY)
+* Password atau API key lainnya
 
 Jika token bot Anda bocor:
 
