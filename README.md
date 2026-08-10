@@ -125,28 +125,9 @@ Dilarang menggunakan proyek ini untuk:
 
 * Spam ke pengguna tanpa persetujuan.
 * Mengganggu grup/channel milik orang lain.
-* Flooding layanan Telegram.
-* Bypass sistem pembatasan Telegram.
 * Aktivitas ilegal atau melanggar ketentuan layanan Telegram.
 
 Developer tidak bertanggung jawab atas penyalahgunaan proyek ini. Gunakan hanya pada bot, chat, grup, atau lingkungan yang Anda miliki atau telah mendapatkan izin.
-
----
-
-🔑 Keamanan Kredensial
-
-JANGAN PERNAH mengunggah file konfigurasi yang berisi:
-
-* BOT_TOKEN
-* OWNER_ID
-* Kredensial Supabase (URL & ANON_KEY)
-* Password atau API key lainnya
-
-Jika token bot Anda bocor:
-
-1. Segera revoke/rotate token melalui BotFather.
-2. Hapus credential dari riwayat Git (jika sudah terlanjur push).
-3. Jangan hanya menghapus commit terakhir — pastikan token lama sudah tidak aktif.
 
 ---
 
@@ -159,6 +140,7 @@ Pengguna bebas memodifikasi asal pencantumkan nana pemilik/copyright/hak cipta
 
 ⚠️ Disclaimer:
 Proyek ini dibuat untuk tujuan pembelajaran, pengembangan, dan pengujian pada lingkungan yang memiliki izin resmi.
+
 Dengan menggunakan proyek ini, pengguna bertanggung jawab penuh atas seluruh aktivitas yang dilakukan.
 Gunakan dengan akal sehat.
 
