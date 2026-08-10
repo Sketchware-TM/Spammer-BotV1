@@ -16,7 +16,7 @@
 
 ## 📖 Tentang Proyek
 
-**Spammer-BotV1** adalah aplikasi manajemen bot Telegram berbasis Node.js yang dilengkapi dengan dashboard web interaktif. Proyek ini dirancang untuk memudahkan pengujian dan pengelolaan bot Telegram, dengan sistem keamanan autentikasi berbasis Supabase dan fitur obfuskasi HTML tambahan.
+**Spammer-BotV1** adalah script untuk spam/mengirim teks ke bot telegram orang lain, dan saya menyediakan script Obfuscator untuk html **index.html** dan **dashboard.html**.
 
 **Teknologi Utama:**
 - 🟢 **Backend:** Node.js, Telegraf
