@@ -158,9 +158,7 @@ Pengguna bebas memodifikasi asal pencantumkan nana pemilik/copyright/hak cipta
 ---
 
 ⚠️ Disclaimer:
-
 Proyek ini dibuat untuk tujuan pembelajaran, pengembangan, dan pengujian pada lingkungan yang memiliki izin resmi.
-
 Dengan menggunakan proyek ini, pengguna bertanggung jawab penuh atas seluruh aktivitas yang dilakukan.
 Gunakan dengan akal sehat.
 
