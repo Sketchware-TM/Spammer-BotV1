@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Login - Bot Rasuk</title>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>//eruda.init();</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px; background:#0b0b1a; position:relative; overflow-x:hidden; }
+        #bgVideo { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:brightness(0.35) saturate(1.1); }
+        .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:1; pointer-events:none; }
+        .card { position:relative; z-index:2; width:100%; max-width:440px; background:rgba(255,255,255,0.08); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border-radius:32px; padding:32px 30px 28px; border:1px solid rgba(255,255,255,0.12); box-shadow:0 25px 50px -12px rgba(0,0,0,0.5); transition:transform 0.3s ease; color:#fff; }
+        .card:hover { transform:translateY(-4px); }
+        .header-main { text-align:center; margin-bottom:28px; }
+        .header-main h1 { font-size:28px; font-weight:700; letter-spacing:1px; }
+        .header-main h1 i { color:#ffd700; margin-right:8px; }
+        .header-main .sub { font-size:14px; opacity:0.65; margin-top:4px; }
+        .header-main .sub i { margin-right:6px; color:#ffd700; }
+        .form-group { margin-bottom:16px; }
+        .form-group label { display:block; font-size:13px; font-weight:600; opacity:0.8; margin-bottom:5px; letter-spacing:0.3px; }
+        .form-group label i { margin-right:8px; color:#ffd700; width:20px; }
+        .form-group input { width:100%; padding:12px 16px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:14px; color:#fff; font-family:inherit; font-size:14px; transition:all 0.3s; outline:none; backdrop-filter:blur(4px); }
+        .form-group input::placeholder { opacity:0.5; }
+        .form-group input:focus { border-color:#ffd700; box-shadow:0 0 0 3px rgba(255,215,0,0.15); }
+        .btn-login { width:100%; padding:14px; border:none; border-radius:14px; font-family:inherit; font-size:18px; font-weight:700; cursor:pointer; transition:all 0.3s; display:inline-flex; align-items:center; justify-content:center; gap:10px; margin-top:6px; }
+        .btn-confirm { background:linear-gradient(135deg,#ffd700,#f5a623); color:#1a1a2e; box-shadow:0 8px 20px rgba(255,215,0,0.25); }
+        .btn-confirm:hover:not(:disabled) { transform:scale(1.02); box-shadow:0 12px 30px rgba(255,215,0,0.4); }
+        .btn-request { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; box-shadow:none; margin-top:12px; }
+        .btn-request:hover:not(:disabled) { background:rgba(255,255,255,0.2); }
+        .btn-login:disabled { opacity:0.6; cursor:not-allowed; transform:none !important; }
+        #toast { 
+            position:fixed; 
+            bottom:30px; 
+            left:50%; 
+            transform:translateX(-50%) translateY(80px); 
+            background:rgba(0,0,0,0.8); 
+            backdrop-filter:blur(12px); 
+            padding:14px 28px; 
+            border-radius:40px; 
+            color:#fff; 
+            font-size:14px; 
+            font-weight:500; 
+            border:1px solid rgba(255,255,255,0.1); 
+            box-shadow:0 10px 30px rgba(0,0,0,0.5); 
+            z-index:999; 
+            transition:all 0.4s ease; 
+            opacity:0; 
+            pointer-events:none; 
+            white-space:normal; 
+            word-break:break-word; 
+            text-align:center;
+            max-width:90%; 
+            width:auto;
+        }
+        #toast.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+        #toast i { margin-right:10px; }
+        .toast-success i { color:#2ecc71; }
+        .toast-error i { color:#ff6b6b; }
+        .toast-info i { color:#ffd700; }
+        #acceptModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+        #acceptModal .modal-box {
+            background: #1a1a2e;
+            padding: 24px 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(46, 204, 113, 0.4);
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+        #acceptModal .modal-box i {
+            color: #2ecc71;
+            font-size: 50px;
+            margin-bottom: 12px;
+        }
+        #acceptModal .modal-box h2 {
+            margin-bottom: 10px;
+            font-size: 22px;
+            color: #2ecc71;
+        }
+        #acceptModal .modal-box p {
+            font-size: 15px;
+            opacity: 0.9;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        #acceptModal .modal-box .password-display {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffd700;
+            display: inline-block;
+            margin: 10px 0 16px 0;
+            letter-spacing: 1px;
+        }
+        #acceptModal .modal-box .btn-ok-modal {
+            padding: 10px 30px;
+            background: linear-gradient(135deg,#2ecc71,#27ae60);
+            border: none;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        #acceptModal .modal-box .btn-ok-modal:hover {
+            transform: scale(1.05);
+        }
+        @media (max-width:600px) { 
+            body { padding:15px; } 
+            .card { padding:24px 18px 20px; } 
+            .header-main h1 { font-size:24px; } 
+            #toast { font-size:13px; padding:10px 16px; max-width:92%; bottom:20px; }
+        }
+    </style>
+</head>
+<body>
+    <video id="bgVideo" autoplay muted loop playsinline>
+        <source src="vid/vid.mp4" type="video/mp4">
+        <source src="vid/vid.webm" type="video/webm">
+    </video>
+    <div class="overlay"></div>
+
+    <div class="card" id="mainCard">
+        <div class="header-main">
+            <h1><i class="fas fa-bolt"></i> Bot Rasuk</h1>
+            <div class="sub"><i class="fas fa-lock"></i> Authentication</div>
+        </div>
+
+        <form id="loginForm" onsubmit="return false;">
+            <div class="form-group">
+                <label><i class="fas fa-key"></i> Password</label>
+                <input type="password" id="password" placeholder="Masukkan password akses..." required>
+            </div>
+
+            <button type="button" class="btn-login btn-confirm" id="confirmBtn">
+                <i class="fas fa-check-circle"></i> Confirm
+            </button>
+            <button type="button" class="btn-login btn-request" id="requestBtn">
+                <i class="fas fa-paper-plane"></i> Request Auth
+            </button>
+        </form>
+    </div>
+
+    <div id="acceptModal">
+        <div class="modal-box">
+            <i class="fas fa-check-circle"></i>
+            <h2>Request Diterima!</h2>
+            <p>Owner telah mengatur password untuk akun Anda.</p>
+            <p style="font-size:14px; opacity:0.8; margin-bottom:4px;">Password Anda adalah:</p>
+            <div class="password-display" id="modalPasswordDisplay">********</div>
+            <p style="font-size:13px; opacity:0.7;">Silakan copy password di atas, lalu masukkan ke kolom login.</p>
+            <button class="btn-ok-modal" id="closeAcceptModalBtn">Ok, Saya Mengerti</button>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="config/config.js"></script>
+
+    <script>
+        const SUPABASE_URL = CONFIG.SUPABASE_URL;
+        const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY;
+
+        const confirmBtn = document.getElementById('confirmBtn');
+        const requestBtn = document.getElementById('requestBtn');
+        const passwordInput = document.getElementById('password');
+        const acceptModal = document.getElementById('acceptModal');
+        const closeAcceptBtn = document.getElementById('closeAcceptModalBtn');
+
+        let toastTimeout;
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.getElementById('toast');
+            clearTimeout(toastTimeout);
+            toast.className = `toast-${type}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i> ${message}`;
+            toast.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        const hasRequested = sessionStorage.getItem('bot_rasuk_requested') === 'true';
+        const storedUniqueId = sessionStorage.getItem('bot_rasuk_uniqueid');
+
+        if (hasRequested && storedUniqueId) {
+            requestBtn.disabled = true;
+            requestBtn.innerHTML = '<i class="fas fa-check"></i> Request Terkirim';
+        } else {
+            if (hasRequested && !storedUniqueId) {
+                sessionStorage.removeItem('bot_rasuk_requested');
+            }
+            requestBtn.disabled = false;
+            requestBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Request Auth';
+        }
+
+        let acceptPollInterval = null;
+        if (storedUniqueId) {
+            acceptPollInterval = setInterval(async () => {
+                try {
+                    const resp = await fetch(`${SUPABASE_URL}/rest/v1/users?unique_id=eq.${storedUniqueId}&select=id,password`, {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+                    const data = await resp.json();
+                    if (data.length === 0) {
+                        clearInterval(acceptPollInterval);
+                        acceptPollInterval = null;
+                        sessionStorage.clear();
+                        showToast('❌ Akun lo dihapus sama owner! Request direset.', 'error', 4000);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                        return;
+                    }
+                    if (data[0].password && data[0].password.trim() !== "") {
+                        if (sessionStorage.getItem('bot_rasuk_notified') === 'true') {
+                            clearInterval(acceptPollInterval);
+                            acceptPollInterval = null;
+                            return;
+                        }
+                        clearInterval(acceptPollInterval);
+                        acceptPollInterval = null;
+                        document.getElementById('modalPasswordDisplay').textContent = data[0].password;
+                        acceptModal.style.display = 'flex';
+                        sessionStorage.setItem('bot_rasuk_notified', 'true');
+                    }
+                } catch (err) {
+                    console.log("Polling status:", err.message);
+                }
+            }, 5000);
+        }
+
+        closeAcceptBtn.addEventListener('click', function() {
+            acceptModal.style.display = 'none';
+            passwordInput.focus();
+        });
+
+        async function getBotConfig() {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/configbot?id=eq.1`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                if (!res.ok) {
+                    console.error(`HTTP Error: ${res.status} ${res.statusText}`);
+                    const errorText = await res.text();
+                    console.error("Response body:", errorText);
+                    return null;
+                }
+                const data = await res.json();
+                console.log("Raw Response Supabase (configbot):", data);
+                if (data && data.length > 0) {
+                    return { botToken: data[0].bot_token, ownerId: data[0].owner_id };
+                } else {
+                    console.error("Tabel configbot kosong atau id=1 tidak ditemukan!");
+                    return null;
+                }
+            } catch (e) {
+                console.error("Gagal fetch Supabase config:", e);
+                return null;
+            }
+        }
+
+        confirmBtn.addEventListener('click', async function() {
+            const pass = passwordInput.value.trim();
+            if (!pass) { showToast('Password wajib diisi!', 'error'); return; }
+
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifikasi...';
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/users?password=eq.${pass}&select=*`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    showToast('Password salah!', 'error', 3500);
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm';
+                    return;
+                }
+
+                const user = data[0];
+                const now = new Date();
+                const expiry = user.expires_at ? new Date(user.expires_at) : null;
+
+                if (expiry && expiry < now) {
+                    showToast('Password expired! Minta auth baru.', 'error', 4000);
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm';
+                    return;
+                }
+
+                const storedUniqueId = sessionStorage.getItem('bot_rasuk_uniqueid');
+                if (!storedUniqueId) {
+                    showToast('ID session tidak ditemukan. Silakan Request Auth ulang!', 'error', 4000);
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm';
+                    return;
+                }
+                if (storedUniqueId !== user.unique_id) {
+                    showToast('Password tidak cocok dengan ID Anda!', 'error', 4000);
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm';
+                    return;
+                }
+
+                if (acceptPollInterval) {
+                    clearInterval(acceptPollInterval);
+                    acceptPollInterval = null;
+                }
+
+                sessionStorage.setItem('bot_rasuk_pass', pass);
+                sessionStorage.setItem('bot_rasuk_expiry', user.expires_at);
+
+                showToast('Login berhasil!', 'success', 2000);
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+
+            } catch (err) {
+                showToast('Error: ' + err.message, 'error', 4000);
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm';
+            }
+        });
+
+        requestBtn.addEventListener('click', async function() {
+            if (this.disabled) return;
+
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+            const config = await getBotConfig();
+            if (!config) {
+                showToast('Gagal ambil config bot!', 'error', 4000);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-paper-plane"></i> Request Auth';
+                return;
+            }
+
+            const uniqueId = crypto.randomUUID();
+
+            const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    unique_id: uniqueId,
+                    password: null,
+                    expires_at: null
+                })
+            });
+
+            if (!insertRes.ok) {
+                showToast('Gagal simpan ID user!', 'error', 4000);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-paper-plane"></i> Request Auth';
+                return;
+            }
+
+            const message = `<blockquote>🔐 <b>REQUEST AUTH BARU</b>
+\nAda user minta akses Bot Rasuk.
+\n<b>UNIQUE ID:</b> <code>${uniqueId}</code>
+\n<b>IP User:</b> ${window.location.hostname}
+\n<b>Waktu Request:</b> ${new Date().toLocaleString()}
+\n<i>Owner:</i>
+/setpassword ${uniqueId} &lt;pass&gt;
+/setexpiry ${uniqueId} &lt;jumlah_hari&gt (0 = unlimited)</blockquote>`;
+
+            try {
+                const url = `https://api.telegram.org/bot${config.botToken}/sendMessage`;
+                const payload = {
+                    chat_id: config.ownerId,
+                    text: message,
+                    parse_mode: 'HTML'
+                };
+
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+
+                if (data.ok) {
+                    sessionStorage.setItem('bot_rasuk_requested', 'true');
+                    sessionStorage.setItem('bot_rasuk_uniqueid', uniqueId);
+                    sessionStorage.removeItem('bot_rasuk_notified');
+                    this.disabled = true;
+                    this.innerHTML = '<i class="fas fa-check"></i> Request Terkirim';
+                    showToast('Request terkirim ke Owner!', 'success', 4000);
+
+                    if (acceptPollInterval) clearInterval(acceptPollInterval);
+                    acceptPollInterval = setInterval(async () => {
+                        try {
+                            const resp = await fetch(`${SUPABASE_URL}/rest/v1/users?unique_id=eq.${uniqueId}&select=id,password`, {
+                                headers: {
+                                    'apikey': SUPABASE_ANON_KEY,
+                                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                                }
+                            });
+                            const data = await resp.json();
+                            if (data.length === 0) {
+                                clearInterval(acceptPollInterval);
+                                acceptPollInterval = null;
+                                sessionStorage.clear();
+                                showToast('❌ Akun lo dihapus sama owner! Request direset.', 'error', 4000);
+                                setTimeout(() => window.location.reload(), 2000);
+                                return;
+                            }
+                            if (data[0].password && data[0].password.trim() !== "") {
+                                if (sessionStorage.getItem('bot_rasuk_notified') === 'true') {
+                                    clearInterval(acceptPollInterval);
+                                    acceptPollInterval = null;
+                                    return;
+                                }
+                                clearInterval(acceptPollInterval);
+                                acceptPollInterval = null;
+                                document.getElementById('modalPasswordDisplay').textContent = data[0].password;
+                                acceptModal.style.display = 'flex';
+                                sessionStorage.setItem('bot_rasuk_notified', 'true');
+                            }
+                        } catch (err) {
+                            console.log("Polling status:", err.message);
+                        }
+                    }, 5000);
+
+                } else {
+                    showToast('Gagal kirim: ' + data.description, 'error', 4000);
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-paper-plane"></i> Request Auth';
+                }
+            } catch (err) {
+                showToast('Error: ' + err.message, 'error', 4000);
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-paper-plane"></i> Request Auth';
+            }
+        });
+    </script>
+</body>
+</html>
