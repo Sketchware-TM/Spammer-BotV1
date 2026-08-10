@@ -84,7 +84,7 @@ Spammer-BotV1/
 │   └── config.js               # Konfigurasi lokal
 │
 └── vid/
-    ├── vid.mp4                 # Video pendukung (opsiona)
+    ├── vid.mp4                 # Video pendukung (opsional)
 ```
 
 ---
@@ -123,11 +123,11 @@ Fitur pada proyek ini dapat mengirimkan pesan berulang ke target Telegram. Harap
 
 Dilarang menggunakan proyek ini untuk:
 
-· Spam ke pengguna tanpa persetujuan.
-· Mengganggu grup/channel milik orang lain.
-· Flooding layanan Telegram.
-· Bypass sistem pembatasan Telegram.
-· Aktivitas ilegal atau melanggar ketentuan layanan Telegram.
+* Spam ke pengguna tanpa persetujuan.
+* Mengganggu grup/channel milik orang lain.
+* Flooding layanan Telegram.
+* Bypass sistem pembatasan Telegram.
+* Aktivitas ilegal atau melanggar ketentuan layanan Telegram.
 
 Developer tidak bertanggung jawab atas penyalahgunaan proyek ini. Gunakan hanya pada bot, chat, grup, atau lingkungan yang Anda miliki atau telah mendapatkan izin.
 
