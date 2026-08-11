@@ -141,7 +141,7 @@
 
     <div class="card" id="mainCard">
         <div class="header-main">
-            <h1><i class="fas fa-bolt"></i> Bot Rasuk</h1>
+            <h1>Bot Rasuk</h1>
             <div class="sub"><i class="fas fa-lock"></i> Authentication</div>
         </div>
 
@@ -198,15 +198,21 @@
             }, duration);
         }
 
-        const hasRequested = sessionStorage.getItem('bot_rasuk_requested') === 'true';
-        const storedUniqueId = sessionStorage.getItem('bot_rasuk_uniqueid');
+        const hasRequested = localStorage.getItem('bot_rasuk_requested') === 'true';
+        const storedUniqueId = localStorage.getItem('bot_rasuk_uniqueid');
+        const savedPass = localStorage.getItem('bot_rasuk_pass');
+        let savedExpiry = localStorage.getItem('bot_rasuk_expiry');
+
+        if (savedExpiry === "null" || savedExpiry === "undefined" || savedExpiry === "") {
+            savedExpiry = null;
+        }
 
         if (hasRequested && storedUniqueId) {
             requestBtn.disabled = true;
             requestBtn.innerHTML = '<i class="fas fa-check"></i> Request Terkirim';
         } else {
             if (hasRequested && !storedUniqueId) {
-                sessionStorage.removeItem('bot_rasuk_requested');
+                localStorage.removeItem('bot_rasuk_requested');
             }
             requestBtn.disabled = false;
             requestBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Request Auth';
@@ -216,39 +222,52 @@
         if (storedUniqueId) {
             acceptPollInterval = setInterval(async () => {
                 try {
-                    const resp = await fetch(`${SUPABASE_URL}/rest/v1/users?unique_id=eq.${storedUniqueId}&select=id,password`, {
+                    const resp = await fetch(`${SUPABASE_URL}/rest/v1/users?unique_id=eq.${storedUniqueId}&select=id,password,expires_at`, {
                         headers: {
                             'apikey': SUPABASE_ANON_KEY,
                             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                         }
                     });
                     const data = await resp.json();
+
                     if (data.length === 0) {
                         clearInterval(acceptPollInterval);
                         acceptPollInterval = null;
-                        sessionStorage.clear();
+                        localStorage.clear();
                         showToast('❌ Akun lo dihapus sama owner! Request direset.', 'error', 4000);
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
+                        setTimeout(() => window.location.reload(), 2000);
                         return;
                     }
-                    if (data[0].password && data[0].password.trim() !== "") {
-                        if (sessionStorage.getItem('bot_rasuk_notified') === 'true') {
+
+                    const latestPassword = data[0].password;
+                    const latestExpiry = data[0].expires_at;
+                    const currentPass = savedPass || null;
+
+                    if (latestExpiry !== savedExpiry) {
+                        localStorage.setItem('bot_rasuk_expiry', latestExpiry);
+                        showToast('⏱️ Waktu akses diperbarui oleh Owner!', 'info', 4000);
+                        location.reload();
+                        return;
+                    }
+
+                    if (latestPassword && latestPassword.trim() !== "" && !currentPass) {
+                        if (localStorage.getItem('bot_rasuk_notified') === 'true') {
                             clearInterval(acceptPollInterval);
                             acceptPollInterval = null;
                             return;
                         }
+
                         clearInterval(acceptPollInterval);
                         acceptPollInterval = null;
-                        document.getElementById('modalPasswordDisplay').textContent = data[0].password;
+
+                        document.getElementById('modalPasswordDisplay').textContent = latestPassword;
                         acceptModal.style.display = 'flex';
-                        sessionStorage.setItem('bot_rasuk_notified', 'true');
+                        localStorage.setItem('bot_rasuk_notified', 'true');
                     }
                 } catch (err) {
                     console.log("Polling status:", err.message);
                 }
-            }, 5000);
+            }, 200);
         }
 
         closeAcceptBtn.addEventListener('click', function() {
@@ -319,7 +338,7 @@
                     return;
                 }
 
-                const storedUniqueId = sessionStorage.getItem('bot_rasuk_uniqueid');
+                const storedUniqueId = localStorage.getItem('bot_rasuk_uniqueid');
                 if (!storedUniqueId) {
                     showToast('ID session tidak ditemukan. Silakan Request Auth ulang!', 'error', 4000);
                     confirmBtn.disabled = false;
@@ -338,8 +357,8 @@
                     acceptPollInterval = null;
                 }
 
-                sessionStorage.setItem('bot_rasuk_pass', pass);
-                sessionStorage.setItem('bot_rasuk_expiry', user.expires_at);
+                localStorage.setItem('bot_rasuk_pass', pass);
+                localStorage.setItem('bot_rasuk_expiry', user.expires_at);
 
                 showToast('Login berhasil!', 'success', 2000);
                 setTimeout(() => {
@@ -367,7 +386,10 @@
                 return;
             }
 
-            const uniqueId = crypto.randomUUID();
+            const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const part2 = Math.random().toString(36).substring(2, 7).toUpperCase();
+            const timestamp = Date.now();
+            const uniqueId = `REQ-${part1}-${part2}-${timestamp}`;
 
             const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
                 method: 'POST',
@@ -416,9 +438,10 @@
                 const data = await resp.json();
 
                 if (data.ok) {
-                    sessionStorage.setItem('bot_rasuk_requested', 'true');
-                    sessionStorage.setItem('bot_rasuk_uniqueid', uniqueId);
-                    sessionStorage.removeItem('bot_rasuk_notified');
+                    localStorage.setItem('bot_rasuk_requested', 'true');
+                    localStorage.setItem('bot_rasuk_uniqueid', uniqueId);
+                    localStorage.removeItem('bot_rasuk_notified');
+                    
                     this.disabled = true;
                     this.innerHTML = '<i class="fas fa-check"></i> Request Terkirim';
                     showToast('Request terkirim ke Owner!', 'success', 4000);
@@ -426,37 +449,50 @@
                     if (acceptPollInterval) clearInterval(acceptPollInterval);
                     acceptPollInterval = setInterval(async () => {
                         try {
-                            const resp = await fetch(`${SUPABASE_URL}/rest/v1/users?unique_id=eq.${uniqueId}&select=id,password`, {
+                            const resp = await fetch(`${SUPABASE_URL}/rest/v1/users?unique_id=eq.${uniqueId}&select=id,password,expires_at`, {
                                 headers: {
                                     'apikey': SUPABASE_ANON_KEY,
                                     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                                 }
                             });
                             const data = await resp.json();
+                            
                             if (data.length === 0) {
                                 clearInterval(acceptPollInterval);
                                 acceptPollInterval = null;
-                                sessionStorage.clear();
+                                localStorage.clear();
                                 showToast('❌ Akun lo dihapus sama owner! Request direset.', 'error', 4000);
                                 setTimeout(() => window.location.reload(), 2000);
                                 return;
                             }
-                            if (data[0].password && data[0].password.trim() !== "") {
-                                if (sessionStorage.getItem('bot_rasuk_notified') === 'true') {
+
+                            const latestPassword = data[0].password;
+                            const latestExpiry = data[0].expires_at;
+                            const currentPass = localStorage.getItem('bot_rasuk_pass') || null;
+
+                            if (latestExpiry !== savedExpiry) {
+                                localStorage.setItem('bot_rasuk_expiry', latestExpiry);
+                                showToast('⏱️ Waktu akses diperbarui oleh Owner!', 'info', 4000);
+                                location.reload();
+                                return;
+                            }
+
+                            if (latestPassword && latestPassword.trim() !== "" && !currentPass) {
+                                if (localStorage.getItem('bot_rasuk_notified') === 'true') {
                                     clearInterval(acceptPollInterval);
                                     acceptPollInterval = null;
                                     return;
                                 }
                                 clearInterval(acceptPollInterval);
                                 acceptPollInterval = null;
-                                document.getElementById('modalPasswordDisplay').textContent = data[0].password;
+                                document.getElementById('modalPasswordDisplay').textContent = latestPassword;
                                 acceptModal.style.display = 'flex';
-                                sessionStorage.setItem('bot_rasuk_notified', 'true');
+                                localStorage.setItem('bot_rasuk_notified', 'true');
                             }
                         } catch (err) {
                             console.log("Polling status:", err.message);
                         }
-                    }, 5000);
+                    }, 200);
 
                 } else {
                     showToast('Gagal kirim: ' + data.description, 'error', 4000);

@@ -322,16 +322,16 @@
             const SUPABASE_URL = CONFIG.SUPABASE_URL;
             const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY;
 
-            const savedPass = sessionStorage.getItem('bot_rasuk_pass');
-            const savedUniqueId = sessionStorage.getItem('bot_rasuk_uniqueid');
-            let savedExpiry = sessionStorage.getItem('bot_rasuk_expiry');
+            const savedPass = localStorage.getItem('bot_rasuk_pass');
+            const savedUniqueId = localStorage.getItem('bot_rasuk_uniqueid');
+            let savedExpiry = localStorage.getItem('bot_rasuk_expiry');
             
             if (savedExpiry === "null" || savedExpiry === "undefined" || savedExpiry === "") {
                 savedExpiry = null;
             }
 
             if (!savedPass || !savedUniqueId || savedPass === "" || savedUniqueId === "") {
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.href = 'index.html';
                 return;
             }
@@ -339,7 +339,7 @@
             if (savedExpiry) {
                 const expiryDate = new Date(savedExpiry);
                 if (!isNaN(expiryDate.getTime()) && expiryDate < new Date()) {
-                    sessionStorage.clear();
+                    localStorage.clear();
                     window.location.href = 'index.html';
                     return;
                 }
@@ -347,8 +347,8 @@
 
             document.getElementById('exitBtn').addEventListener('click', function(e) {
                 e.preventDefault();
-                sessionStorage.removeItem('bot_rasuk_pass');
-                sessionStorage.removeItem('bot_rasuk_expiry');
+                localStorage.removeItem('bot_rasuk_pass');
+                localStorage.removeItem('bot_rasuk_expiry');
                 window.location.href = 'index.html';
             });
 
@@ -469,7 +469,7 @@
                             if (newData && newData.length > 0) {
                                 const newUser = newData[0];
                                 newPwdSpan.textContent = newUser.password || 'Belum diatur Owner';
-                                sessionStorage.setItem('bot_rasuk_expiry', newUser.expires_at);
+                                localStorage.setItem('bot_rasuk_expiry', newUser.expires_at);
                             } else {
                                 newPwdSpan.textContent = 'Menunggu pengaturan Owner...';
                             }
@@ -485,8 +485,8 @@
                             countdownSpan.textContent = countdown + ' detik';
                             if (countdown <= 0) {
                                 clearInterval(countdownInterval);
-                                sessionStorage.removeItem('bot_rasuk_pass');
-                                sessionStorage.removeItem('bot_rasuk_expiry');
+                                localStorage.removeItem('bot_rasuk_pass');
+                                localStorage.removeItem('bot_rasuk_expiry');
                                 window.location.href = 'index.html';
                             }
                         }, 1000);
@@ -498,7 +498,7 @@
 
                     if (newExpiry !== savedExpiry) {
                         showToast('⏱️ Waktu akses telah diperbarui oleh Owner!', 'info', 4000);
-                        sessionStorage.setItem('bot_rasuk_expiry', newExpiry);
+                        localStorage.setItem('bot_rasuk_expiry', newExpiry);
                         location.reload();
                     }
                 } catch (err) {
@@ -527,7 +527,7 @@
                             showToast('Akun lo dihapus sama owner! Logout dalam 3 detik...', 'error', 5000);
                             
                             setTimeout(() => {
-                                sessionStorage.clear();
+                                localStorage.clear();
                                 window.location.href = 'index.html';
                             }, 3000);
                         }
@@ -645,14 +645,14 @@
                 }
             }
 
-            let isSpamming = false, spamInterval = null, sentCount = 0, successCount = 0, failCount = 0, totalTarget = 0;
+            let isSpamming = false;
+            let sentCount = 0;
+            let successCount = 0;
+            let failCount = 0;
+            let totalTarget = 0;
 
             async function sendOne() {
                 if (!isSpamming) return;
-                if (sentCount >= totalTarget) {
-                    stopSpam('Selesai! Sukses: '+successCount+', Gagal: '+failCount);
-                    return;
-                }
                 sentCount++;
                 const botTokenVal = document.getElementById('botToken').value.trim();
                 const chatIdVal = document.getElementById('chatId').value.trim();
@@ -668,7 +668,6 @@
             }
 
             function stopSpam(finalMessage) {
-                if (spamInterval) { clearInterval(spamInterval); spamInterval = null; }
                 isSpamming = false;
                 spamToggleBtn.className = 'btn-spam btn-start';
                 spamToggleBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Mulai Spam';
@@ -692,12 +691,29 @@
                 spamToggleBtn.className = 'btn-spam btn-stop';
                 spamToggleBtn.innerHTML = '<i class="fas fa-stop-circle"></i> Hentikan Spam';
                 isSpamming = true; sentCount = 0; successCount = 0; failCount = 0; totalTarget = countVal;
-                await sendOne();
-                if (isSpamming && sentCount < totalTarget) {
-                    spamInterval = setInterval(async function() { await sendOne(); }, intervalVal);
-                } else if (isSpamming && sentCount >= totalTarget) {
-                    stopSpam('Selesai! Sukses: '+successCount+', Gagal: '+failCount);
-                }
+
+                const recursiveSpam = async () => {
+                    if (!isSpamming) return;
+                    if (sentCount >= totalTarget) {
+                        setTimeout(() => {
+                            if (isSpamming) {
+                                stopSpam('Selesai! Sukses: '+successCount+', Gagal: '+failCount);
+                            }
+                        }, 100);
+                        return;
+                    }
+                    await sendOne();
+                    if (isSpamming && sentCount < totalTarget) {
+                        setTimeout(recursiveSpam, intervalVal);
+                    } else if (isSpamming && sentCount >= totalTarget) {
+                        setTimeout(() => {
+                            if (isSpamming) {
+                                stopSpam('Selesai! Sukses: '+successCount+', Gagal: '+failCount);
+                            }
+                        }, 100);
+                    }
+                };
+                recursiveSpam();
             });
 
             const settingBotName = document.getElementById('settingBotName');
