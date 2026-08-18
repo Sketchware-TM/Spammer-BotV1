@@ -1,4 +1,4 @@
-# 🤖 Spammer-BotV1
+# 🤖 Spammer-BotV1.2
 
 <p align="center">
   <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=github">
@@ -9,14 +9,14 @@
 </p>
 
 <p align="center">
-  <b>Bot Spammer Telegram V1</b>
+  <b>Bot Spammer Telegram V1.2</b>
 </p>
 
 ---
 
 ## 📖 Tentang Proyek
 
-**Spammer-BotV1** adalah script untuk spam/mengirim teks ke bot telegram orang lain, dan saya menyediakan script Obfuscator untuk html **index.html** dan **dashboard.html**.
+**Spammer-BotV1.2** adalah script untuk spam/mengirim teks ke bot telegram orang lain, dan saya menyediakan script Obfuscator untuk html **index.html** dan **dashboard.html**.
 
 **Teknologi Utama:**
 - 🟢 **Backend:** Node.js, Telegraf
@@ -147,6 +147,6 @@ Gunakan dengan akal sehat.
 ---
 
 <p align="center">
-  <b>Spammer-BotV1</b><br>
+  <b>Spammer-BotV1.2</b><br>
   © By Sketchware™ All Rights Reserved
 </p>
