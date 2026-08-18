@@ -1,9 +1,9 @@
 const { Telegraf } = require('telegraf');
 const { createClient } = require('@supabase/supabase-js');
 
-const BOT_TOKEN = '8877634770:bot_token'; 
-const OWNER_ID = 'your_chat_id'; 
-const SUPABASE_URL = 'https://blablabla.supabase.co';
+const BOT_TOKEN = '8877634770:your_bot_token'; 
+const OWNER_ID = '8253766491'; 
+const SUPABASE_URL = 'https://blabaknanaj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
 
 const bot = new Telegraf(BOT_TOKEN);
